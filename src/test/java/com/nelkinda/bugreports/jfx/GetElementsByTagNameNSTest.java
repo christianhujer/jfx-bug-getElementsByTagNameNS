@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GetElementsByTagNameNSTest {
     private static WebEngine engine;
-    private NodeListLength monitor = new NodeListLength();
+    private final NodeListLength nodeListLength = new NodeListLength();
 
     @BeforeAll
     static void loadTestPage() throws InterruptedException {
@@ -52,8 +52,8 @@ public class GetElementsByTagNameNSTest {
     @ParameterizedTest
     @EnumSource(TestCase.class)
     void getDocumentElement(final TestCase testCase) throws InterruptedException {
-        testCase.runner.accept(() -> monitor.getValues(engine.getDocument()));
-        monitor.verify();
+        testCase.runner.accept(() -> nodeListLength.getValues(engine.getDocument()));
+        nodeListLength.verify(testCase.toString());
     }
 
     // Used in @EnumSource
@@ -91,14 +91,16 @@ public class GetElementsByTagNameNSTest {
         }
     }
 
-    static class NodeListLength extends CompletionMonitor {
+    static class NodeListLength {
         static final String XHTML_NS_URI = "http://www.w3.org/1999/xhtml";
+        private final CompletionMonitor monitor = new CompletionMonitor();
         int lengthOfNSNodeList;
         int lengthOfNodeList;
 
-        void verify() throws InterruptedException {
-            waitForDone();
+        void verify(final String message) throws InterruptedException {
+            monitor.waitForDone();
             assertAll(
+                    message,
                     () -> assertEquals(1, lengthOfNodeList, "Without Namespace"),
                     () -> assertEquals(1, lengthOfNSNodeList, "With Namespace")
             );
@@ -107,7 +109,7 @@ public class GetElementsByTagNameNSTest {
         void getValues(final Document doc) {
             lengthOfNodeList = doc.getElementsByTagName("html").getLength();
             lengthOfNSNodeList = doc.getElementsByTagNameNS(XHTML_NS_URI, "html").getLength();
-            setDone();
+            monitor.setDone();
         }
     }
 }
