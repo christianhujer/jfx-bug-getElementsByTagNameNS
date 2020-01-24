@@ -7,7 +7,7 @@
     <artifactId>jfx-bug-getElementsByTagNameNS</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <properties>
-        <version.javafx>13</version.javafx>
+        <version.javafx>14-ea+7</version.javafx>
         <maven.compiler.source>13</maven.compiler.source>
         <maven.compiler.target>13</maven.compiler.target>
     </properties>
