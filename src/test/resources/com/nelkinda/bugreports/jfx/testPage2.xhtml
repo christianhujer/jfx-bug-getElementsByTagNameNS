@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>Test Page to reproduce JFX WebView DOM bugs</title>
+    <style>
+        .gherkin {
+            white-space: pre-line;
+            border: 1px solid black;
+            padding: 1ex;
+            font-family: monospace;
+        }
+        #placeHolder {
+            border: 2px solid blue;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<h1>Test Page to reproduce JFX WebView DOM bugs</h1>
+<p>
+    This page should load perfectly well.
+    The Content-Type should be set to <code>application/xhtml+xml</code>.
+    When you load this page into Chrome,
+    and run <code>document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "html")</code>,
+    it returns, as expected, a <code>HTMLCollection</code> containing one element, the document element of this file.
+</p>
+<h2>Bug Description</h2>
+<h3>Expected Behavior</h3>
+<p class="gherkin">Given content which is <abbr title="Extensible Hypertext Markup Language">XHTML</abbr> according to the HTML 5.2 specification,
+    When loading that content with media type <code>application/xhtml+xml</code>,
+    Then the NS functions of the DOM API work with the appropriate namespace support.</p>
+<h3>Actual Behavior</h3>
+<p class="gherkin">Given content which is <abbr title="Extensible Hypertext Markup Language">XHTML</abbr> according to the HTML 5.2 specification,
+    When loading that content with media type <code>application/xhtml+xml</code>,
+    Then the NS functions of the DOM API work unexpectedly do not work.</p>
+<h3>Behavior in JavaScript</h3>
+<p>
+    Number of elements in the NodeList returned by <code>document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "html")</code>:
+    <br/>
+    <span id="placeHolder">0</span>
+    (Expected value: 1)
+</p>
+<p>
+    Tested with the following browsers:
+</p>
+<ul>
+    <li>Chromium 79.0.3945.79 (works)</li>
+    <li>Firefox 72.0.1 (works)</li>
+    <li>Konqueror 5.0.97 (works)</li>
+    <li>JavaFX WebView 14ea+7 (works in JavaScript, fails in Java)</li>
+</ul>
+<script>
+    var size = "" + document.getElementsByTagNameNS("http://www.w3.org/1999/xhtml", "html").length;
+    document
+        .getElementById("placeHolder")
+        .replaceChild(
+            document
+                .createTextNode(size),
+            document
+                .getElementById("placeHolder")
+                .firstChild);
+</script>
+</body>
+</html>
